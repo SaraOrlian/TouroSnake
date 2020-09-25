@@ -6,12 +6,17 @@ package touro.snake;
 public class GardenThread extends Thread {
 
     private static final int DELAY_MS = 80;
+    private int currentDelay;
+    private int currentRound;
+
     private final Garden garden;
     private final GardenView gardenView;
 
     public GardenThread(Garden garden, GardenView gardenView) {
         this.garden = garden;
         this.gardenView = gardenView;
+        currentDelay = DELAY_MS;
+        currentRound = 0;
     }
 
     /**
@@ -21,9 +26,21 @@ public class GardenThread extends Thread {
         while (garden.advance()) {
             gardenView.repaint();
             try {
-                Thread.sleep(DELAY_MS);
+                decrementDelay();
+                Thread.sleep(currentDelay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public void decrementDelay() {
+        if (currentDelay > 15) { //the smallest delay allowed
+            if (currentRound < 50) {
+                currentRound++;
+            } else {
+                currentDelay--;
+                currentRound = 0;
             }
         }
     }

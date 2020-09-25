@@ -1,7 +1,5 @@
 package touro.snake;
 
-import java.awt.*;
-
 public class SnakeMain {
 
     public static void main(String[] args) {
@@ -17,8 +15,9 @@ public class SnakeMain {
 
         GardenThread thread = new GardenThread(garden, gardenView);
         thread.start();
+        BackgroundSound backgroundSound = new BackgroundSound();
 
-        new SnakeFrame(gardenView, snakeKeyListener).setVisible(true);
+        new SnakeFrame(gardenView, snakeKeyListener, backgroundSound).setVisible(true);
     }
 
 }

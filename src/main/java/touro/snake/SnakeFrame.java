@@ -7,7 +7,8 @@ public class SnakeFrame extends JFrame {
 
     public SnakeFrame(
             GardenView gardenView,
-            SnakeKeyListener snakeKeyListener
+            SnakeKeyListener snakeKeyListener,
+            BackgroundSound backgroundSound
     ) throws HeadlessException {
         super();
 
@@ -18,5 +19,6 @@ public class SnakeFrame extends JFrame {
 
         add(gardenView, BorderLayout.CENTER);
         addKeyListener(snakeKeyListener);
+        backgroundSound.playMusic();
     }
 }
