@@ -111,7 +111,7 @@ public class Snake {
         int x = head.getX();
         int y = head.getY();
 
-        return x > 0 && x < Garden.WIDTH && y > 0 && y < Garden.HEIGHT;
+        return x >= 0 && x < Garden.WIDTH && y >= 0 && y < Garden.HEIGHT;
     }
 
     /**

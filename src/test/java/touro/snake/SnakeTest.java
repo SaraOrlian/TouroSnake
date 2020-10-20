@@ -68,17 +68,48 @@ public class SnakeTest {
 
     @Test
     public void turnTo() {
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        //given
+        SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
+        Snake snake = new Snake(snakeHeadStateMachine);
+
+        //when
+        snake.turnTo(Direction.South);
+
+        //then
+        verify(snakeHeadStateMachine).turnTo(Direction.South);
     }
 
     @Test
     public void contains_true() {
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        //given
+        SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
+        Snake snake = new Snake(snakeHeadStateMachine);
+
+        Food food = new Food(56, 20);
+        List<Square> squares = snake.getSquares();
+        squares.add(new Square(56,20));
+
+        //when
+        boolean contains = snake.contains(food);
+
+        //then
+        assertTrue(contains);
     }
 
     @Test
     public void contains_false() {
-        throw new UnsupportedOperationException("Not Implemented Yet.");
+        //given
+        SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
+        Snake snake = new Snake(snakeHeadStateMachine);
+
+        Food food = mock(Food.class);
+
+        //when
+        boolean contains = snake.contains(food);
+
+        //then
+        assertFalse(contains);
+
     }
 
     @Test
@@ -120,6 +151,7 @@ public class SnakeTest {
     public void inBounds_true() {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
+        when(snakeHeadStateMachine.getDirection()).thenReturn(Direction.West);
         Snake snake = new Snake(snakeHeadStateMachine);
         //when
         snake.move();
@@ -131,6 +163,7 @@ public class SnakeTest {
     public void inBounds_false() {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
+        when(snakeHeadStateMachine.getDirection()).thenReturn(Direction.West);
         Snake snake = new Snake(snakeHeadStateMachine);
         //when
         //number of iterations to be determined
