@@ -1,9 +1,9 @@
 package touro.snake;
 
+import touro.snake.strategy.SnakeStrategy;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static touro.snake.Direction.*;
 
 /**
  * Model object that represents the Snake and allows it to grow, turn and move.
@@ -16,10 +16,16 @@ public class Snake {
 
     private final SnakeHeadStateMachine snakeHeadStateMachine;
 
+    private final SnakeStrategy snakeStrategy;
+
     private boolean grow = false;
 
-    public Snake(SnakeHeadStateMachine snakeHeadStateMachine) {
+    public Snake(
+            SnakeHeadStateMachine snakeHeadStateMachine,
+            SnakeStrategy snakeStrategy
+    ) {
         this.snakeHeadStateMachine = snakeHeadStateMachine;
+        this.snakeStrategy = snakeStrategy;
         createSnake();
     }
 
@@ -49,69 +55,58 @@ public class Snake {
         snakeHeadStateMachine.turnTo(newDirection);
     }
 
+    public boolean canTurnTo(Direction direction) {
+        return snakeHeadStateMachine.getDirection().canTurnTo(direction);
+    }
+
+    public SnakeStrategy getStrategy() {
+        return snakeStrategy;
+    }
+
     public Square getHead() {
         return squares.get(0);
+    }
+
+    public List<Square> getBody() {
+        return squares.subList(1, squares.size()-1);
+    }
+
+    /**
+     * @return The location of the new head after it has been moved.
+     */
+    public Square newHead() {
+        //get direction
+        Direction direction = snakeHeadStateMachine.getDirection();
+
+        //save head position in variable previous square
+        return getHead().moveTo(direction);
     }
 
     /**
      * Moves the Snake forward in whatever direction the head is facing.
      */
     public void move() {
-
-        //get direction
-        Direction direction = snakeHeadStateMachine.getDirection();
-
-        //save head position in variable previous square
-        Square previousHead = getHead();
-        int x = previousHead.getX();
-        int y = previousHead.getY();
-
-        //move head one square in proper direction (assumes origin is on the top left corner)
-        Square newSquare;
-        switch (direction) {
-            case North:
-                newSquare = new Square(x, y - 1);
-                break;
-            case East:
-                newSquare = new Square(x + 1, y);
-                break;
-            case South:
-                newSquare = new Square(x, y + 1);
-                break;
-            case West:
-                newSquare = new Square(x - 1, y);
-                break;
-            default:
-                System.out.println("ERROR: Direction is not valid or is null");
-                return;
-        }
-        squares.add(0, newSquare);
+        squares.add(0, newHead());
         if (!getGrow()) {
             squares.remove(squares.size() - 1);
         } else {
             setGrow(false);
         }
-
-
     }
 
     /**
-     * @param food
+     * @param square
      * @return true if the Food intersects with the Snake, otherwise false.
      */
-    public boolean contains(Food food) {
-        return squares.contains(food);
+    public boolean contains(Square square) {
+        return squares.contains(square);
     }
 
     /**
      * @return true if the Snake is within the bounds of the Garden, otherwise false.
      */
     public boolean inBounds() {
-        Square head = getHead();
-        int x = head.getX();
-        int y = head.getY();
-
-        return x >= 0 && x < Garden.WIDTH && y >= 0 && y < Garden.HEIGHT;
+        return getHead().inBounds();
     }
 
     /**

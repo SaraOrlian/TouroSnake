@@ -2,6 +2,7 @@ package touro.snake;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import touro.snake.strategy.SnakeStrategy;
 
 import javax.sound.sampled.Clip;
 
@@ -19,11 +20,13 @@ public class GardenTest {
         in death.
          */
         //given
+        SnakeStrategy strategy = mock(SnakeStrategy.class);
         Snake snake = mock(Snake.class);
         FoodFactory foodFactory = mock(FoodFactory.class);
         Clip clip = mock(Clip.class);
         Garden garden = new Garden(snake, foodFactory, clip);
 
+        doReturn(strategy).when(snake).getStrategy();
         doReturn(true).when(snake).inBounds();
         doReturn(false).when(snake).eatsSelf();
         Square square = mock(Square.class);
@@ -55,6 +58,8 @@ public class GardenTest {
     @Test
     public void playSound() {
         //given
+
+        SnakeStrategy strategy = mock(SnakeStrategy.class);
         Snake snake = mock(Snake.class);
         FoodFactory foodFactory = mock(FoodFactory.class);
         Food food = new Food(50, 20);
@@ -63,6 +68,7 @@ public class GardenTest {
         Garden garden = new Garden(snake, foodFactory, clip);
         List<Square> squares = List.of(new Square(50, 20));
 
+        doReturn(strategy).when(snake).getStrategy();
         when(snake.inBounds()).thenReturn(true);
         when(snake.eatsSelf()).thenReturn(false);
         when(snake.getHead()).thenReturn(squares.get(0));

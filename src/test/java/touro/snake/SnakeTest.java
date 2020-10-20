@@ -1,23 +1,25 @@
 package touro.snake;
 
+import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 import org.junit.Test;
+import touro.snake.strategy.BlankStrategy;
+import touro.snake.strategy.SnakeStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-
-import static org.mockito.Mockito.*;
-
 public class SnakeTest {
+
+    private final SnakeStrategy strategy = mock(SnakeStrategy.class);
 
     @Test
     public void grow() {
 
         //if
         SnakeHeadStateMachine state = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(state);
+        Snake snake = new Snake(state, strategy);
        // when(state.getDirection()).thenReturn(Direction.North); //The direction of the head is irrelevant
 
         //when
@@ -33,7 +35,7 @@ public class SnakeTest {
 
         //if
         SnakeHeadStateMachine state = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(state);
+        Snake snake = new Snake(state, strategy);
         when(state.getDirection()).thenReturn(Direction.North);
         List<Square> previousSquares = new ArrayList<>(snake.getSquares());
         int prevSize = previousSquares.size();
@@ -70,7 +72,7 @@ public class SnakeTest {
     public void turnTo() {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(snakeHeadStateMachine);
+        Snake snake = new Snake(snakeHeadStateMachine, strategy);
 
         //when
         snake.turnTo(Direction.South);
@@ -83,7 +85,7 @@ public class SnakeTest {
     public void contains_true() {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(snakeHeadStateMachine);
+        Snake snake = new Snake(snakeHeadStateMachine, strategy);
 
         Food food = new Food(56, 20);
         List<Square> squares = snake.getSquares();
@@ -100,7 +102,7 @@ public class SnakeTest {
     public void contains_false() {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(snakeHeadStateMachine);
+        Snake snake = new Snake(snakeHeadStateMachine, strategy);
 
         Food food = mock(Food.class);
 
@@ -116,7 +118,7 @@ public class SnakeTest {
     public void eatsSelf_true() {
         //IF
         SnakeHeadStateMachine headStateMock = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(headStateMock);
+        Snake snake = new Snake(headStateMock, strategy);
 
         Square middleSquare = new Square(50,20);  //create a square on the snake with X and Y coordinates
         Square headSquare = new Square(50,20);
@@ -137,7 +139,7 @@ public class SnakeTest {
 
         //IF
         SnakeHeadStateMachine headStateMock = mock(SnakeHeadStateMachine.class);
-        Snake snake = new Snake(headStateMock);
+        Snake snake = new Snake(headStateMock, strategy);
 
         //WHEN
         boolean val = snake.eatsSelf();
@@ -152,7 +154,7 @@ public class SnakeTest {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
         when(snakeHeadStateMachine.getDirection()).thenReturn(Direction.West);
-        Snake snake = new Snake(snakeHeadStateMachine);
+        Snake snake = new Snake(snakeHeadStateMachine, strategy);
         //when
         snake.move();
         //then
@@ -164,7 +166,7 @@ public class SnakeTest {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
         when(snakeHeadStateMachine.getDirection()).thenReturn(Direction.West);
-        Snake snake = new Snake(snakeHeadStateMachine);
+        Snake snake = new Snake(snakeHeadStateMachine, strategy);
         //when
         //number of iterations to be determined
         for (int i = 0; i < 100; i++) {
