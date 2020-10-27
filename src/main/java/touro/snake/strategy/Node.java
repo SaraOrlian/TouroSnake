@@ -1,4 +1,4 @@
-package touro.snake.strategy.astar;
+package touro.snake.strategy;
 
 import touro.snake.Square;
 
@@ -29,7 +29,7 @@ public class Node extends Square {
         return parent;
     }
 
-    private void setParent(Node parent) {
+    public void setParent(Node parent) {
         this.parent = parent;
         fromStart = (parent.fromStart+1) ;
     }
@@ -40,6 +40,13 @@ public class Node extends Square {
 
     public double getCost() {
         return fromStart * 7 + fromEnd;
+    }
+
+    public boolean equals(Node other) {
+        if (this.getX() == other.getX() && this.getY() == other.getY()) {
+            return true;
+        }
+        return false;
     }
 
 }
