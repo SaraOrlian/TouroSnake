@@ -16,6 +16,7 @@ public class AStarStrategy implements SnakeStrategy {
     @Override
     public void turnSnake(Snake snake, Garden garden) {
 
+        Direction directions[] = Direction.values();
         //initialize open list -- has the possibilities
         ArrayList<Node> open = new ArrayList<>();
         //initialize closed list -- has the path among other nodes visited that had low numbers
@@ -28,80 +29,60 @@ public class AStarStrategy implements SnakeStrategy {
             return;
         }
         Node endNode = new Node(food.getX(), food.getY());   //endNode = target
-        System.out.println("food:    x: " + endNode.getX() + "       y:  " + endNode.getY());
 
         //put starting node on open list
         open.add(headNode);
 
-        Node currentNode;
+
         //loop until found the end
         while (!open.isEmpty()) {
 
             //let the currentNode equal the node with the least f value
-            currentNode = getLeastCostNode(open);
+            Node currentNode = getLeastCostNode(open);
 
             open.remove(currentNode);
             closed.add(currentNode);
 
             //Found the goal
             if (currentNode.equals(endNode)) {
-/*                //List with food and all it's parents i.e. the path
-                ArrayList<Node> path = new ArrayList<>();
-                path.add(currentNode);
-                while (currentNode.getParent() != null) {
-                    path.add(currentNode.getParent());
-                    currentNode = currentNode.getParent();
-                }*/
-                //Collections.reverse(path);
-
-                /*for (int ix = 0; ix-1 < path.size(); ix++) {
-                    snake.turnTo(path.get(ix).directionTo(path.get(ix + 1)));
-                    garden.advance();
-                    System.out.println(path.toArray().toString() + "__________________________found______________________");
-                }*/
-
                 //snake moves according to closed list
-                makeSnakeMove(snake, garden, currentNode);
+                makeSnakeMove(snake, currentNode, headNode);
                 System.out.println("I'm here");
                 return;
             }
 
-
-            //Generate children
-            ArrayList<Node> children = new ArrayList<>();
-
-            Node down = new Node(currentNode.getX(), currentNode.getY() - 1);
-            Node up = new Node(currentNode.getX(), currentNode.getY() + 1);
-            Node left = new Node(currentNode.getX() - 1, currentNode.getY());
-            Node right = new Node(currentNode.getX() + 1, currentNode.getY());
-            children.add(down);
-            children.add(up);
-            children.add(left);
-            children.add(right);
-
-            for (Node child : children) {  // Adjacent squares
-                //adjacent square on closed list
+            for (Direction direction : directions) {
+                Node child = new Node(currentNode.moveTo(direction), currentNode, food);
+//               //adjacent square on closed list
                 if (closed.contains(child)) {
                     continue;
                 }
                 //adjacent square not walkable
-                if(!child.inBounds()) {
+                if (snake.contains(child) || !child.inBounds()) {
                     continue;
                 }
 
                 //adjacent square not on open list
-                if(!open.contains(child)) {
+                if (!open.contains(child)) {
+                    // look at a new node and calculate the cost
+                    Node node = new Node(child, currentNode, endNode);
                     // Add the child to the openList
-                    open.add(child);
-                    // Make adjacent square the parent of current node
-                    currentNode.setParent(child);
+                    open.add(node);
                 }
 
                 //adjacent square on open list
-                if(open.contains(child)||child.getCost() < currentNode.getCost()) {
-                    currentNode.setParent(child);
-                        //System.out.println(" child: ------------     x is" + child.getX() + "and y is" + child.getY() + "--------------");
-                        //System.out.println(" currentNode: ------------     x is" + currentNode.getX() + "and y is" + currentNode.getY() + "--------------");
+                if (open.contains(child) || child.getCost() < currentNode.getCost()) {
+                    //the original child info
+                    int childIndex = open.indexOf(child);
+                    Node oldChild = open.get(childIndex);
+                    //create a new child of the same x and y coordinates since perhaps a different cost will be calculated- if the algorithm switched paths
+                    Node newChild = new Node(child, currentNode, endNode);
+                    //check which path is more efficient
+                    if (newChild.getCost() < oldChild.getCost()) {
+                        //replace the child with the one that has the least cost
+                        open.remove(oldChild);
+                        open.add(newChild);
+                    }
 
                 }
 
@@ -110,24 +91,16 @@ public class AStarStrategy implements SnakeStrategy {
 
     }
 
-    private void makeSnakeMove(Snake snake, Garden garden, Node currentNode) {
-        /*for (int ix = 0; ix-1 < closed.size(); ix++) {
-            snake.turnTo(closed.get(ix).directionTo(closed.get(ix + 1)));
-            garden.advance();
-            }*/
-        ArrayList<Node> path = new ArrayList<>();
-        while (currentNode != null) {
-            path.add(currentNode);
+    private void makeSnakeMove(Snake snake, Node currentNode, Node headNode) {
+        Node path = new Node(currentNode);
+        while(currentNode != headNode) {
+            path = currentNode;
             currentNode = currentNode.getParent();
         }
-        if (path.size()>1) {
-            for (int ix = 0; ix - 1 < path.size(); ix++) {
-                snake.turnTo(path.get(ix).directionTo(path.get(ix + 1)));
-                //snake.move();
-                garden.advance();
-            }
-        }
-   }
+        Direction direction = headNode.directionTo(path);
+        snake.turnTo(direction);
+    }
+
 
     private Node getLeastCostNode(ArrayList<Node> open) {
         Node smallest = open.get(0);

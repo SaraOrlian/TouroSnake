@@ -29,7 +29,7 @@ public class Node extends Square {
         return parent;
     }
 
-    public void setParent(Node parent) {
+    private void setParent(Node parent) {
         this.parent = parent;
         fromStart = (parent.fromStart+1) ;
     }
@@ -42,11 +42,5 @@ public class Node extends Square {
         return fromStart * 7 + fromEnd;
     }
 
-    public boolean equals(Node other) {
-        if (this.getX() == other.getX() && this.getY() == other.getY()) {
-            return true;
-        }
-        return false;
-    }
 
 }
