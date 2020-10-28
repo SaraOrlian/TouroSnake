@@ -1,10 +1,11 @@
-package touro.snake.strategy.astar;
+package touro.snake.strategy.astar.orlian;
 
 import touro.snake.*;
 import touro.snake.strategy.Node;
 import touro.snake.strategy.SnakeStrategy;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implement the AStar Algorithm
@@ -13,6 +14,10 @@ import java.util.ArrayList;
  */
 
 public class AStarStrategy implements SnakeStrategy {
+
+    List<Square> searchSpaces = new ArrayList<>();
+    List<Square> chosenPath = new ArrayList<>();
+
     @Override
     public void turnSnake(Snake snake, Garden garden) {
 
@@ -30,9 +35,11 @@ public class AStarStrategy implements SnakeStrategy {
         }
         Node endNode = new Node(food.getX(), food.getY());   //endNode = target
 
+        searchSpaces.clear();
+        chosenPath.clear();
+
         //put starting node on open list
         open.add(headNode);
-
 
         //loop until found the end
         while (!open.isEmpty()) {
@@ -42,12 +49,13 @@ public class AStarStrategy implements SnakeStrategy {
 
             open.remove(currentNode);
             closed.add(currentNode);
+            searchSpaces.add(currentNode);
 
             //Found the goal
             if (currentNode.equals(endNode)) {
-                //snake moves according to closed list
-                makeSnakeMove(snake, currentNode, headNode);
-                System.out.println("I'm here");
+                //snake moves
+                makeSnakeMove(snake, currentNode, headNode, chosenPath);
+                searchSpaces.remove(currentNode);
                 return;
             }
 
@@ -55,10 +63,12 @@ public class AStarStrategy implements SnakeStrategy {
                 Node child = new Node(currentNode.moveTo(direction), currentNode, food);
 //               //adjacent square on closed list
                 if (closed.contains(child)) {
+                    searchSpaces.add(child);
                     continue;
                 }
                 //adjacent square not walkable
                 if (snake.contains(child) || !child.inBounds()) {
+                    searchSpaces.remove(child);
                     continue;
                 }
 
@@ -68,6 +78,7 @@ public class AStarStrategy implements SnakeStrategy {
                     Node node = new Node(child, currentNode, endNode);
                     // Add the child to the openList
                     open.add(node);
+                    searchSpaces.remove(node);
                 }
 
                 //adjacent square on open list
@@ -82,6 +93,9 @@ public class AStarStrategy implements SnakeStrategy {
                         //replace the child with the one that has the least cost
                         open.remove(oldChild);
                         open.add(newChild);
+                        searchSpaces.remove(oldChild);
+                        searchSpaces.add(newChild);
+                        //searchSpaces.add(newChild);
                     }
 
                 }
@@ -91,16 +105,26 @@ public class AStarStrategy implements SnakeStrategy {
 
     }
 
-    private void makeSnakeMove(Snake snake, Node currentNode, Node headNode) {
+    @Override
+    public List<Square> getPath() {
+        return chosenPath;
+    }
+
+    @Override
+    public List<Square> getSearchSpace() {
+        return  searchSpaces;
+    }
+
+    private void makeSnakeMove(Snake snake, Node currentNode, Node headNode, List<Square> chosenPath) {
         Node path = new Node(currentNode);
         while(currentNode != headNode) {
             path = currentNode;
             currentNode = currentNode.getParent();
+            chosenPath.add(currentNode);
         }
         Direction direction = headNode.directionTo(path);
         snake.turnTo(direction);
     }
-
 
     private Node getLeastCostNode(ArrayList<Node> open) {
         Node smallest = open.get(0);
@@ -111,6 +135,8 @@ public class AStarStrategy implements SnakeStrategy {
         }
         return smallest;
     }
+
+
 }
 
 
