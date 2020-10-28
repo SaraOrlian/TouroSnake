@@ -19,7 +19,7 @@ public class BackgroundSound {
             AudioInputStream audioInput = AudioSystem.getAudioInputStream(inputStream);
             this.clip = AudioSystem.getClip();
             clip.open(audioInput);
-            //clip.start();
+            clip.start();
             clip.loop(Clip.LOOP_CONTINUOUSLY);
 
         } catch (Exception ex) {
