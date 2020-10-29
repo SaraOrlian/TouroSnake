@@ -53,13 +53,7 @@ public class GardenView extends JComponent {
 
     void paintSearchSpace(Graphics g) {
         g.setColor(Color.cyan);
-/*        for(Square square : aStarStrategy.getSearchSpace()) {
-            int x = square.getX() * CELL_SIZE;
-            int y = square.getY() * CELL_SIZE;
-            g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
-        }*/
-        for (int ix = 0; ix < aStarStrategy.getSearchSpace().size(); ix++)
-        {
+        for (int ix = 0; ix < aStarStrategy.getSearchSpace().size(); ix++) {
             int x = aStarStrategy.getSearchSpace().get(ix).getX() * CELL_SIZE;
             int y = aStarStrategy.getSearchSpace().get(ix).getY() * CELL_SIZE;
             g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
@@ -68,7 +62,7 @@ public class GardenView extends JComponent {
 
     void paintChosenPath(Graphics g) {
         g.setColor(Color.PINK);
-        for(Square square : aStarStrategy.getPath()) {
+        for (Square square : aStarStrategy.getPath()) {
             int x = square.getX() * CELL_SIZE;
             int y = square.getY() * CELL_SIZE;
             g.fillRect(x, y, CELL_SIZE, CELL_SIZE);
