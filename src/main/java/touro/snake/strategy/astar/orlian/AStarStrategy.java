@@ -57,39 +57,43 @@ public class AStarStrategy implements SnakeStrategy {
                 return;
             }
 
-            for (Direction direction : directions) {
-                Node child = new Node(currentNode.moveTo(direction), currentNode, food);
-//               //adjacent square on closed list
-                if (closed.contains(child)) {
-                    continue;
-                }
-                //adjacent square not walkable
-                if (snake.contains(child) || !child.inBounds()) {
-                    continue;
-                }
+            adjacentNodesHandling(snake, directions, open, closed, food, endNode, currentNode);
+        }
+    }
 
-                //adjacent square not on open list
-                if (!open.contains(child)) {
-                    // look at a new node and calculate the cost
-                    Node node = new Node(child, currentNode, endNode);
-                    // Add the child to the openList
-                    open.add(node);
-                }
+    private void adjacentNodesHandling(Snake snake, Direction[] directions, ArrayList<Node> open, ArrayList<Node> closed, Food food, Node endNode, Node currentNode) {
+        for (Direction direction : directions) {
+            Node child = new Node(currentNode.moveTo(direction), currentNode, food);
+            //adjacent square on closed list
+            if (closed.contains(child)) {
+                continue;
+            }
+            //adjacent square not walkable
+            if (snake.contains(child) || !child.inBounds()) {
+                continue;
+            }
 
-                //adjacent square on open list
-                if (open.contains(child) || child.getCost() < currentNode.getCost()) {
-                    //the original child info
-                    int childIndex = open.indexOf(child);
-                    Node oldChild = open.get(childIndex);
-                    searchSpaces.add(oldChild);
-                    //create a new child of the same x and y coordinates since perhaps a different cost will be calculated- if the algorithm switched paths
-                    Node newChild = new Node(child, currentNode, endNode);
-                    //check which path is more efficient
-                    if (newChild.getCost() < oldChild.getCost()) {
-                        //replace the child with the one that has the least cost
-                        open.remove(oldChild);
-                        open.add(newChild);
-                    }
+            //adjacent square not on open list
+            if (!open.contains(child)) {
+                // look at a new node and calculate the cost
+                Node node = new Node(child, currentNode, endNode);
+                // Add the child to the openList
+                open.add(node);
+            }
+
+            //adjacent square on open list
+            if (open.contains(child) || child.getCost() < currentNode.getCost()) {
+                //the original child info
+                int childIndex = open.indexOf(child);
+                Node oldChild = open.get(childIndex);
+                searchSpaces.add(oldChild);
+                //create a new child of the same x and y coordinates since perhaps a different cost will be calculated- if the algorithm switched paths
+                Node newChild = new Node(child, currentNode, endNode);
+                //check which path is more efficient
+                if (newChild.getCost() < oldChild.getCost()) {
+                    //replace the child with the one that has the least cost
+                    open.remove(oldChild);
+                    open.add(newChild);
                 }
             }
         }
