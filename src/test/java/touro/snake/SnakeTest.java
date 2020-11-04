@@ -165,11 +165,11 @@ public class SnakeTest {
     public void inBounds_false() {
         //given
         SnakeHeadStateMachine snakeHeadStateMachine = mock(SnakeHeadStateMachine.class);
+        int leaveBounds = Garden.WIDTH;
         when(snakeHeadStateMachine.getDirection()).thenReturn(Direction.West);
         Snake snake = new Snake(snakeHeadStateMachine, strategy);
         //when
-        //number of iterations to be determined
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < leaveBounds; i++) {
             snake.move();
         }
         //then
