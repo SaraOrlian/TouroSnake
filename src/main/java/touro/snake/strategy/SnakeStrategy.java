@@ -30,3 +30,5 @@ public interface SnakeStrategy {
     List<Square> getSearchSpace();
 
 }
+
+

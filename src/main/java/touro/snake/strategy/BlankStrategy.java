@@ -25,4 +25,8 @@ public class BlankStrategy implements SnakeStrategy {
     public List<Square> getSearchSpace() {
         return Collections.emptyList();
     }
+
 }
+
+
+
